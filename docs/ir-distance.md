@@ -1,10 +1,11 @@
+<!--remove-start-->
 # Ir Distance
 
 Run with:
 ```bash
 node eg/ir-distance.js
 ```
-
+<!--remove-end-->
 
 ```javascript
 // Run this program with a device model:
@@ -36,19 +37,19 @@ node eg/ir-distance.js
 //
 var five = require("johnny-five"),
   board = new five.Board(),
-  device = process.argv[2] || "GP2Y0A02YK0F";
+  controller = process.argv[2] || "GP2Y0A02YK0F";
 
 board.on("ready", function() {
   var distance = new five.IR.Distance({
-    device: device,
+    controller: controller,
     pin: "A0",
     freq: 500
   });
 
   distance.on("data", function() {
-    if (device) {
+    if (controller) {
       console.log("inches: ", this.inches);
-      console.log("cm: ", this.cm, this.raw);
+      console.log("cm: ", this.centimeters, this.raw);
     } else {
       console.log("value: ", this.value);
     }
@@ -64,9 +65,10 @@ board.on("ready", function() {
 
 
 
-
+<!--remove-start-->
 ## License
 Copyright (c) 2012, 2013, 2014 Rick Waldron <waldron.rick@gmail.com>
 Licensed under the MIT license.
 Copyright (c) 2014, 2015 The Johnny-Five Contributors
 Licensed under the MIT license.
+<!--remove-end-->

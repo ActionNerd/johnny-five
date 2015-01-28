@@ -180,6 +180,46 @@ exports["Servo"] = {
     test.done();
   },
 
+  completeMoveEmmitted: function(test) {
+    test.expect(1);
+
+    this.servo = new Servo({
+      pin: 11,
+      board: board
+    });
+
+    this.servo.to(180);
+    this.servo.to(180, 1000, 100);
+    this.servo.on("move:complete", function() {
+      test.ok(this.servoWrite.callCount, 1);
+      test.done();
+    }.bind(this));
+  },
+
+
+  degreeChange: function(test) {
+    test.expect(2);
+
+    this.servo = new Servo({
+      pin: 11,
+      board: board
+    });
+    // We are spying on setInterval instead of servoWrite because the following set of
+    // parameters will result with setInterval will be called with an interval of infinity
+    var spy = sinon.spy(global, "setInterval");
+
+    this.servo.to(180);
+
+    this.servo.to(180, 1000, 100);
+
+    this.clock.tick(1010);
+
+    test.equal(spy.callCount, 0);
+    test.ok(this.servoWrite.callCount, 1);
+
+    test.done();
+  },
+
   fps: function(test) {
     test.expect(1);
 
@@ -350,7 +390,7 @@ exports["Servo - Continuous"] = {
     this.continuousServo = new Servo.Continuous({
       pin: 5,
       board: board,
-      deadband: [85,95]
+      deadband: [85, 95]
     });
 
     this.continuousServo.cw(0.5);
@@ -368,7 +408,7 @@ exports["Servo - Continuous"] = {
     this.continuousServo = new Servo.Continuous({
       pin: 5,
       board: board,
-      deadband: [85,95],
+      deadband: [85, 95],
       range: [20, 160]
     });
 
@@ -391,14 +431,22 @@ exports["Servo - Allowed Pin Names"] = {
     test.equal(new Servo(2).pin, 2);
     test.equal(new Servo(12).pin, 12);
 
-    test.equal(new Servo({ pin: 2 }).pin, 2);
-    test.equal(new Servo({ pin: 12 }).pin, 12);
+    test.equal(new Servo({
+      pin: 2
+    }).pin, 2);
+    test.equal(new Servo({
+      pin: 12
+    }).pin, 12);
 
     test.equal(new Servo("A0").pin, 14);
     test.equal(new Servo(14).pin, 14);
 
-    test.equal(new Servo({ pin: "A0" }).pin, 14);
-    test.equal(new Servo({ pin: 14 }).pin, 14);
+    test.equal(new Servo({
+      pin: "A0"
+    }).pin, 14);
+    test.equal(new Servo({
+      pin: 14
+    }).pin, 14);
 
     // Modes is SERVO
     test.equal(new Servo(12).mode, 4);
@@ -419,13 +467,28 @@ exports["Servo - Allowed Pin Names"] = {
 
     nonFirmata.name = "FooBoard";
 
-    test.equal(new Servo({ pin: 2, board: board }).pin, 2);
-    test.equal(new Servo({ pin: 12, board: board }).pin, 12);
-    test.equal(new Servo({ pin: "A0", board: board }).pin, 0);
+    test.equal(new Servo({
+      pin: 2,
+      board: board
+    }).pin, 2);
+    test.equal(new Servo({
+      pin: 12,
+      board: board
+    }).pin, 12);
+    test.equal(new Servo({
+      pin: "A0",
+      board: board
+    }).pin, 0);
 
     // Modes is SERVO
-    test.equal(new Servo({ pin: 12, board: board }).mode, 4);
-    test.equal(new Servo({ pin: "A0", board: board }).mode, 4);
+    test.equal(new Servo({
+      pin: 12,
+      board: board
+    }).mode, 4);
+    test.equal(new Servo({
+      pin: "A0",
+      board: board
+    }).mode, 4);
 
     test.done();
   }
